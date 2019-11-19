@@ -1,41 +1,83 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
+    <h1>Список</h1>
+    {{countNotDone}} more to do,
+    {{countIsDone}} done
+    <br>
+    <input v-model="fil">
+    <button 
+      v-for="btn of btns" :key="btn"
+      :class="{'active': activeBtn == btn}"
+      @click="changeFilterType(btn)"
+    >
+      {{btn}} 
+    </button>
+
+    <p v-for="el of arrNotDone" :key="el.title" >
+      {{el.title}}  
+      <button @click="del(el.title)">DEL</button>
+      <button @click="done(el)">Done!</button>
     </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa" target="_blank" rel="noopener">pwa</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <input v-model="inputed">
+    <button @click="addHandler">Add</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  name: 'HelloWorld', 
+  data() {
+    return { 
+      btns:['All', "Active", 'Done'],
+      activeBtn:'All',
+      fil:'',
+      inputed:'',
+      arr: [
+        {title: 'Drink coffe', isDone: false},
+        {title: 'Make Awesome', isDone: false},
+        {title: 'Lunch', isDone: false}
+      ]
+    }
+  },
+  computed: {
+    arrNotDone(){
+      return this.arr.filter(el => {
+        let f = true
+        if(this.fil) {
+           f = el.title.toLowerCase().match(this.fil.toLowerCase())
+        }
+        let act = true;
+        // if(this.activeBtn === 'All') 
+        if(this.activeBtn === 'Active') act = !el.isDone  
+        if(this.activeBtn === 'Done') act = el.isDone
+        return  act && f
+      })
+    },
+    countNotDone() {
+      return this.arr.filter(el=>!el.isDone).length
+    },
+    countIsDone(){
+      return this.arr.filter(el=>el.isDone).length
+    }
+  },
+  methods: {
+    del(title) {
+      const i = this.arr.findIndex(el=>el.title == title)
+      this.arr.splice(i,1) 
+    },
+    done(el){ 
+      el.isDone = true
+    },
+    addHandler(){
+      this.arr.push({
+        title: this.inputed,
+        isDone: false
+      })
+      this.inputed = ''
+    },
+    changeFilterType(e) {
+      this.activeBtn = e;
+    }
   }
 }
 </script>
@@ -55,5 +97,10 @@ li {
 }
 a {
   color: #42b983;
+}
+.active {
+  background: green;
+  color: white
+  
 }
 </style>
