@@ -1,5 +1,8 @@
 # из Урока 65. Vue-todo и REact-todo
+DEMO: http://towering-wash.surge.sh/
+<a href='DEMO: http://towering-wash.surge.sh/'>
 <img src=demo.png>
+</a>
 
 ## Project setup
 ```
